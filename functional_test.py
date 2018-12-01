@@ -1,33 +1,44 @@
 from selenium import webdriver
+import unittest
 
-# mere has heard of a nice website that she'd like to take a 
-# look at, she opens her browser!
-browser = webdriver.Firefox()
+class NewVisitorTest(unittest.TestCase):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
 
-# She opens the homepage
-browser.get('http://localhost:8000')
+    def tearDown(self):
+        self.browser.quit()
 
-# and notices that the header mentions a todo list!
-assert 'To-Do' in browser.title
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        # mere has heard of a nice website that she'd like to take a 
+        # look at, she opens her browser!
 
-# shes invited to enter a to-do item right away
+        # She opens the homepage
+        self.browser.get('http://localhost:8000')
 
-# she enters "Buy new ink" as todo item & when she hits enter the page
-# updates and displays a list with one item: 
-# 1: Buy new Ink
+        # and notices that the header mentions a todo list!
+        self.assertIn('To-Do', self.browser.title)
+        self.fail('Finish the test!')
 
-# She still has the ability to enter text into the text box
-# She enters "Take out the trash" as her second item
+        # shes invited to enter a to-do item right away
 
-# After pressing enter, the page updates and a second item shows up:
-# 2: Take out the trash
+        # she enters "Buy new ink" as todo item & when she hits enter the page
+        # updates and displays a list with one item: 
+        # 1: Buy new Ink
 
-# She wonders if her items will be saved, she sees that the site
-# has generated a unique URL for her & there is some explanatory text 
-# to that effect
+        # She still has the ability to enter text into the text box
+        # She enters "Take out the trash" as her second item
 
-# She visits said URl, her todo list is still there 
+        # After pressing enter, the page updates and a second item shows up:
+        # 2: Take out the trash
 
-# she closes the browser
+        # She wonders if her items will be saved, she sees that the site
+        # has generated a unique URL for her & there is some explanatory text 
+        # to that effect
 
-browser.quit()
+        # She visits said URl, her todo list is still there 
+
+        # she closes the browser
+
+
+if __name__ == '__main__':
+    unittest.main(warnings='ignore')
