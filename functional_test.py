@@ -33,14 +33,15 @@ class NewVisitorTest(unittest.TestCase):
         # updates and displays a list with one item: 
         # 1: Buy new Ink
         inputbox.send_keys('Buy new ink')
-        inputbox.send_keys(Keys.Enter)
+        inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
 
         self.assertTrue(
-            any(row.text == '1: Buy new ink' for row in rows)
+            any(row.text == '1: Buy new ink' for row in rows),
+            "New to-do item did not appear in table"
         )
 
         # She still has the ability to enter text into the text box
