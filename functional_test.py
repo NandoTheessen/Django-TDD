@@ -10,6 +10,11 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         # mere has heard of a nice website that she'd like to take a 
         # look at, she opens her browser!
@@ -36,29 +41,31 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
 
         #self.assertTrue(
             #any(row.text == '1: Buy new ink' for row in rows),
             #f"New to-do item did not appear in table. Contents were:\n{table.text}"
         #)
-        self.assertIn('1: Buy new ink', [row.text for row in rows])
-        self.assertIn(
-            '2: Use blue ink for the best looks!', 
-            [row.text for row in rows]
-        )
+
+        self.check_for_row_in_list_table('1: Buy new ink')
+        
 
         # She still has the ability to enter text into the text box
         # She enters "Take out the trash" as her second item
-        self.fail('Finish the test!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Blue should be very fitting!')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # After pressing enter, the page updates and a second item shows up:
         # 2: Take out the trash
+        self.check_for_row_in_list_table('1: Buy new ink')
+        self.check_for_row_in_list_table('2: Blue should be very fitting!')
 
         # She wonders if her items will be saved, she sees that the site
         # has generated a unique URL for her & there is some explanatory text 
         # to that effect
+        self.fail('Finish the test!')
 
         # She visits said URl, her todo list is still there 
 
