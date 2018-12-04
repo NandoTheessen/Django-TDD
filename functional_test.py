@@ -39,9 +39,14 @@ class NewVisitorTest(unittest.TestCase):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
 
-        self.assertTrue(
-            any(row.text == '1: Buy new ink' for row in rows),
-            "New to-do item did not appear in table"
+        #self.assertTrue(
+            #any(row.text == '1: Buy new ink' for row in rows),
+            #f"New to-do item did not appear in table. Contents were:\n{table.text}"
+        #)
+        self.assertIn('1: Buy new ink', [row.text for row in rows])
+        self.assertIn(
+            '2: Use blue ink for the best looks!', 
+            [row.text for row in rows]
         )
 
         # She still has the ability to enter text into the text box
