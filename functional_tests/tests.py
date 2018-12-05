@@ -1,9 +1,10 @@
 from selenium import webdriver
+from django.test import LiveServerTestCase
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
 
@@ -20,7 +21,7 @@ class NewVisitorTest(unittest.TestCase):
         # look at, she opens her browser!
 
         # She opens the homepage
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # and notices that the header mentions a todo list!
         self.assertIn('To-Do', self.browser.title)
@@ -70,7 +71,3 @@ class NewVisitorTest(unittest.TestCase):
         # She visits said URl, her todo list is still there 
 
         # she closes the browser
-
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
