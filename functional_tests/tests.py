@@ -1,8 +1,11 @@
+import time
+import unittest
 from selenium import webdriver
 from django.test import LiveServerTestCase
 from selenium.webdriver.common.keys import Keys
-import unittest
-import time
+from selenium.common.exceptions import WebDriverException
+
+MAX_WAIT = 10
 
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
@@ -11,10 +14,20 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row.text for row in rows])
+    def wait_for_row_in_list_table(self, row_text):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element_by_id('id_list_table')
+                rows = table.find_elements_by_tag_name('tr')
+                self.assertIn('foo', [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
+
+
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # mere has heard of a nice website that she'd like to take a 
@@ -48,7 +61,7 @@ class NewVisitorTest(LiveServerTestCase):
             #f"New to-do item did not appear in table. Contents were:\n{table.text}"
         #)
 
-        self.check_for_row_in_list_table('1: Buy new ink')
+        self.wait_for_row_in_list_table('1: Buy new ink')
         
 
         # She still has the ability to enter text into the text box
@@ -60,8 +73,8 @@ class NewVisitorTest(LiveServerTestCase):
 
         # After pressing enter, the page updates and a second item shows up:
         # 2: Take out the trash
-        self.check_for_row_in_list_table('1: Buy new ink')
-        self.check_for_row_in_list_table('2: Blue should be very fitting!')
+        self.wait_for_row_in_list_table('1: Buy new ink')
+        self.wait_for_row_in_list_table('2: Blue should be very fitting!')
 
         # She wonders if her items will be saved, she sees that the site
         # has generated a unique URL for her & there is some explanatory text 
