@@ -73,8 +73,8 @@ class NewVisitorTest(LiveServerTestCase):
 
         # After pressing enter, the page updates and a second item shows up:
         # 2: Take out the trash
-        self.wait_for_row_in_list_table('1: Buy new ink')
         self.wait_for_row_in_list_table('2: Blue should be very fitting!')
+        self.wait_for_row_in_list_table('1: Buy new ink')
 
         # satisfied she goes back to sleep
 
