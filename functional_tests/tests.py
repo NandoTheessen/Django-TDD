@@ -27,13 +27,6 @@ class NewVisitorTest(LiveServerTestCase):
                     raise e
                 time.sleep(0.5)
 
-    def enter_new_item(self, item):
-        self.browser.get(self.live_server_url)
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_keys(item)
-        inputbox.send_keys(Keys.ENTER)
-
-
     def test_can_start_a_list_and_retrieve_it_later(self):
         # mere has heard of a nice website that she'd like to take a 
         # look at, she opens her browser!
@@ -56,7 +49,8 @@ class NewVisitorTest(LiveServerTestCase):
         # she enters "Buy new ink" as todo item & when she hits enter the page
         # updates and displays a list with one item: 
         # 1: Buy new Ink
-        self.enter_new_item('Buy new ink')
+        inputbox.send_keys('Buy new ink')
+        inputbox.send_keys(Keys.ENTER)
 
 
         #self.assertTrue(
@@ -69,14 +63,16 @@ class NewVisitorTest(LiveServerTestCase):
 
         # She still has the ability to enter text into the text box
         # She enters "Take out the trash" as her second item
-        self.enter_new_item('Blue should be very fitting!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Blue should be very fitting!')
+        inputbox.send_keys(Keys.ENTER)
 
         # After pressing enter, the page updates and a second item shows up:
         # 2: Take out the trash
-        self.wait_for_row_in_list_table('2: Blue should be very fitting!')
         self.wait_for_row_in_list_table('1: Buy new ink')
+        self.wait_for_row_in_list_table('2: Blue should be very fitting!')
 
-        # satisfied she goes back to sleep
+        # Satisfied she goes to bed
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-do list
@@ -93,7 +89,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Now a new user, Francis, comes along to the site
 
-        ## We use a new browser session to make sure that no information 
+        # We use a new browser session to make sure that no information 
         ## of Edith's is coming through from cookies etc
         self.browser.quit()
         self.browser = webdriver.Firefox()
@@ -107,8 +103,11 @@ class NewVisitorTest(LiveServerTestCase):
         # Francis starts a new list bx yentering a new item
         # He is less intresting than Edith
         self.browser.get(self.live_server_url)
-        self.enter_new_item('Buy milk')
-        self.wait_for_row_in_list_table('Buy milk')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+
+        self.wait_for_row_in_list_table('1: Buy milk')
 
         # Francis get's his own unique URL
         francis_list_url = self.browser.current_url
@@ -120,5 +119,5 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)
 
-        # satisfied both go back to sleep
+        # satisfied both go back to bed
         
