@@ -1,3 +1,4 @@
+import os
 import time
 import unittest
 from selenium import webdriver
@@ -7,9 +8,13 @@ from selenium.common.exceptions import WebDriverException
 
 MAX_WAIT = 10
 
+
 class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def tearDown(self):
         self.browser.quit()
@@ -28,7 +33,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
                 time.sleep(0.5)
 
     def test_can_start_a_list_and_retrieve_it_later(self):
-        # mere has heard of a nice website that she'd like to take a 
+        # mere has heard of a nice website that she'd like to take a
         # look at, she opens her browser!
 
         # She opens the homepage
@@ -47,19 +52,17 @@ class NewVisitorTest(StaticLiveServerTestCase):
         )
 
         # she enters "Buy new ink" as todo item & when she hits enter the page
-        # updates and displays a list with one item: 
+        # updates and displays a list with one item:
         # 1: Buy new Ink
         inputbox.send_keys('Buy new ink')
         inputbox.send_keys(Keys.ENTER)
 
-
-        #self.assertTrue(
-            #any(row.text == '1: Buy new ink' for row in rows),
-            #f"New to-do item did not appear in table. Contents were:\n{table.text}"
-        #)
+        # self.assertTrue(
+        # any(row.text == '1: Buy new ink' for row in rows),
+        # f"New to-do item did not appear in table. Contents were:\n
+        # {table.text}")
 
         self.wait_for_row_in_list_table('1: Buy new ink')
-        
 
         # She still has the ability to enter text into the text box
         # She enters "Take out the trash" as her second item
@@ -87,7 +90,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
             delta=10
         )
 
-        # She starts a new list and sees the input is nicely 
+        # She starts a new list and sees the input is nicely
         # centered there too
         inputbox.send_keys('testing')
         inputbox.send_keys(Keys.ENTER)
@@ -99,7 +102,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
             512,
             delta=10
         )
-
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-do list
@@ -116,8 +118,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # Now a new user, Francis, comes along to the site
 
-        # We use a new browser session to make sure that no information 
-        ## of Edith's is coming through from cookies etc
+        # We use a new browser session to make sure that no information
+        # of Edith's is coming through from cookies etc
         self.browser.quit()
         self.browser = webdriver.Firefox()
 
@@ -147,4 +149,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 
         # satisfied both go back to bed
-        
